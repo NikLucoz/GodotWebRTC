@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://0m1kpug5hel3"]
+
+[ext_resource type="Script" path="res://Multiplayer/client.gd" id="1_yawk8"]
+[ext_resource type="Script" path="res://Multiplayer/server.gd" id="2_yru57"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Client" type="Node" parent="."]
+script = ExtResource("1_yawk8")
+
+[node name="Server" type="Node" parent="."]
+script = ExtResource("2_yru57")
+
+[node name="SendPacket" type="Button" parent="."]
+layout_mode = 0
+offset_left = 63.0
+offset_top = 69.0
+offset_right = 219.0
+offset_bottom = 100.0
+text = "Send test packet"
+
+[node name="StartServer" type="Button" parent="."]
+layout_mode = 0
+offset_left = 67.0
+offset_top = 28.0
+offset_right = 221.0
+offset_bottom = 63.0
+text = "Start Server"
+
+[node name="StartClient" type="Button" parent="."]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 30.0
+offset_right = 383.0
+offset_bottom = 65.0
+text = "Start Client"
+
+[connection signal="pressed" from="SendPacket" to="Client" method="_on_send_packet_pressed"]
+[connection signal="pressed" from="StartServer" to="Server" method="_on_start_server_pressed"]
+[connection signal="pressed" from="StartClient" to="Client" method="_on_start_client_pressed"]

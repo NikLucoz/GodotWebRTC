@@ -4,6 +4,10 @@ var id: int = 0
 var rtc_peer: WebRTCMultiplayerPeer = WebRTCMultiplayerPeer.new()
 var host_id: int
 var lobby_id = ""
+var available_lobbies: Dictionary = {}
+
+@onready var start_action_menu: HBoxContainer = $"../Menu/StartActionMenu"
+@onready var lobbies_list_menu: VBoxContainer = $"../Menu/LobbiesListMenu"
 
 @onready var lobby_id_edit: LineEdit = $"../LobbyIdEdit"
 
@@ -12,9 +16,26 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_rtc_server_connected)
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	
+	if not ("--server" in OS.get_cmdline_args()):
+		if "--testing" in OS.get_cmdline_args():
+			setup_client("ws://127.0.0.1:8915")
+		else:
+			setup_client()
+	else:
+		start_action_menu.visible = false
+		lobbies_list_menu.visible = false
+
+func setup_client(server_ip: String = ""):
+	connect_to_server(server_ip)
+	
+	start_action_menu.visible = true
+	lobbies_list_menu.visible = false
+	lobbies_list_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lobbies_list_menu.lobby_join_pressed.connect(_on_join_lobby_pressed)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	peer.poll()
 	if peer.get_available_packet_count() > 0:
 		var packet = peer.get_packet()
@@ -25,9 +46,19 @@ func _process(delta: float) -> void:
 			if data.message == Message.id:
 				id = data.data.id
 				connected(id)
+				#Ask the server all the lobbies open
+				send_packet({
+					"message": Message.lobbiesData,
+					"id": id
+				})
 			
 			if data.message == Message.userConnected:
 				create_peer(data.id)
+			
+			if data.message == Message.lobbiesData:
+				available_lobbies = JSON.parse_string(data.available_lobbies)
+				lobbies_list_menu.available_lobbies = available_lobbies
+				lobbies_list_menu.update_lobby_items()
 			
 			# lobby data sync
 			if data.message == Message.lobby:
@@ -49,8 +80,8 @@ func _process(delta: float) -> void:
 				if rtc_peer.has_peer(data.org_peer):
 					rtc_peer.get_peer(data.org_peer).connection.set_remote_description("answer", data.data)
 
-func connect_to_server(ip: String) -> void:
-	peer.create_client("ws://127.0.0.1:8915")
+func connect_to_server(ip: String = "ws://172.31.192.73:8915") -> void:
+	peer.create_client(ip)
 	print("client started and connected")
 
 func _on_rtc_server_connected():
@@ -66,7 +97,11 @@ func connected(id) -> void:
 	rtc_peer.create_mesh(id)
 	multiplayer.multiplayer_peer = rtc_peer
 
-#web rtc connection
+@rpc("any_peer")
+func ping():
+	print("Ping from " + str(multiplayer.get_remote_sender_id()))
+
+# web rtc connection
 func create_peer(user_id) -> void:
 	if user_id != id:
 		var peer: WebRTCPeerConnection = WebRTCPeerConnection.new()
@@ -132,21 +167,31 @@ func _ice_candidate_created(mid_name, index_name, sdp_name, id) -> void:
 	
 	send_packet(message)
 
+# UI FUNCTIONS
+
 func _on_send_packet_pressed() -> void:
 	ping.rpc()
-	
-@rpc("any_peer")
-func ping():
-	print("Ping from " + str(multiplayer.get_remote_sender_id()))
 
-func _on_start_client_pressed() -> void:
-	connect_to_server("")
-
-func _on_join_lobby_pressed() -> void:
+func _on_join_lobby_pressed(lobby_id: String = "") -> void:
 	var message = {
 		"id": id,
 		"message": Message.lobby,
-		"lobby_id": lobby_id_edit.text
+		"lobby_id": lobby_id
 	}
 	
 	send_packet(message)
+
+func _on_host_game_pressed() -> void:
+	var message = {
+		"id": id,
+		"message": Message.lobby,
+		"lobby_id": ""
+	}
+	
+	send_packet(message)
+
+func _on_open_lobbies_menu_pressed() -> void:
+	start_action_menu.visible = false
+	start_action_menu.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lobbies_list_menu.visible = true
+	lobbies_list_menu.mouse_filter = Control.MOUSE_FILTER_PASS

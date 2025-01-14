@@ -11,5 +11,10 @@ config_version=5
 [application]
 
 config/name="WebRTC"
+run/main_scene="res://Multiplayer/Main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[editor]
+
+run/main_run_args="--server"

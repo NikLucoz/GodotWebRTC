@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=3 uid="uid://cxi50ysg1jyss"]
+
+[ext_resource type="Script" path="res://Multiplayer/GUI/lobby_show_item.gd" id="1_v3hrp"]
+
+[node name="LobbyShowItem" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 60)
+size_flags_horizontal = 3
+theme_override_constants/separation = 100
+script = ExtResource("1_v3hrp")
+
+[node name="LobbyIdLabel" type="Label" parent="."]
+layout_mode = 2
+text = "lobby_name"
+
+[node name="LobbyNOfPlayersLabel" type="Label" parent="."]
+layout_mode = 2
+text = "0/999"
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JoinLobbyButton" type="Button" parent="Control"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -85.0
+offset_top = -25.0
+offset_bottom = 25.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "Join lobby"
+
+[connection signal="pressed" from="Control/JoinLobbyButton" to="." method="_on_join_lobby_button_pressed"]

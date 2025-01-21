@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://0m1kpug5hel3"]
+[gd_scene load_steps=7 format=3 uid="uid://0m1kpug5hel3"]
 
 [ext_resource type="Script" path="res://Multiplayer/client.gd" id="1_68vxp"]
+[ext_resource type="PackedScene" uid="uid://c8ey71i2x54tf" path="res://TestScene/card_game_scene.tscn" id="2_it5m4"]
 [ext_resource type="Script" path="res://Multiplayer/server.gd" id="2_s1lkj"]
 [ext_resource type="Script" path="res://Multiplayer/GUI/player_option_menu.gd" id="3_wkcbt"]
 [ext_resource type="Script" path="res://Multiplayer/GUI/lobbies_list_menu.gd" id="4_sp6k8"]
@@ -16,6 +17,7 @@ grow_vertical = 2
 
 [node name="Client" type="Node" parent="."]
 script = ExtResource("1_68vxp")
+game_scene = ExtResource("2_it5m4")
 
 [node name="Server" type="Node" parent="."]
 script = ExtResource("2_s1lkj")

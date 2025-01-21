@@ -7,6 +7,7 @@ enum Message {
 	userConnected,
 	userDisconnected,
 	lobby,
+	removeLobby,
 	lobbiesData,
 	candidate,
 	offer,

@@ -36,6 +36,11 @@ func _process(_delta: float) -> void:
 			if data.message == Message.offer || data.message == Message.answer || data.message == Message.candidate:
 				print("source id is" + str(data.org_peer))
 				send_packet_to_peer(data.id, data)
+			
+			if data.message == Message.removeLobby:
+				if lobbies.has(data.lobby_id):
+					print("Game started, lobby removed")
+					lobbies.erase(data.lobby_id)
 
 func start_server() -> void:
 	peer.create_server(host_port)

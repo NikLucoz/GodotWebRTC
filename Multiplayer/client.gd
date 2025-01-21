@@ -6,7 +6,7 @@ var host_id: int
 var lobby_id: String = ""
 var available_lobbies: Dictionary = {}
 var player_data: PlayerData = null
-
+@export var game_scene: PackedScene
 @onready var start_action_menu: VBoxContainer = $"../Menu/StartActionMenu"
 @onready var lobbies_list_menu: VBoxContainer = $"../Menu/LobbiesListMenu"
 @onready var lobby_menu: Panel = $"../Menu/LobbyMenu"
@@ -54,6 +54,7 @@ func handle_packet(data: Dictionary) -> void:
 	elif data.message == Message.lobbiesData:
 		update_lobbies_list(data.available_lobbies)
 	elif data.message == Message.lobby:
+		GameManager.players = JSON.parse_string(data.lobby_players)
 		sync_lobby_data(data)
 	elif data.message == Message.candidate:
 		if rtc_peer.has_peer(data.org_peer):
@@ -82,14 +83,6 @@ func sync_lobby_data(data: Dictionary) -> void:
 	start_action_menu.visible = false
 	lobbies_list_menu.visible = false
 
-func handle_rtc_message(data: Dictionary) -> void:
-	if rtc_peer.has_peer(data.org_peer):
-		var connection = rtc_peer.get_peer(data.org_peer).connection
-		if data.message == Message.candidate:
-			connection.add_ice_candidate(data.mid, data.index, data.sdp)
-		elif data.message in [Message.offer, Message.answer]:
-			connection.set_remote_description(data.message.lower(), data.data)
-
 func connect_to_server(ip: String) -> void:
 	var config = ConfigFile.new()
 	if config.load("res://global.ini") != OK:
@@ -97,6 +90,7 @@ func connect_to_server(ip: String) -> void:
 		return
 
 	ip = "ws://127.0.0.1:8915" if "--testing" in OS.get_cmdline_args() else config.get_value("SERVER", "SERVER_IP")
+
 	peer.create_client(ip)
 	print("Client started and connected")
 
@@ -174,6 +168,13 @@ func _on_start_game_button_pressed() -> void:
 	
 @rpc("any_peer", "call_local", "reliable")
 func start_game():
-	await SceneManager.change_scene("res://TestScene/test_scene.tscn", {
+	send_packet({
+		"message": Message.removeLobby,
+		"lobby_id": lobby_id
+	})
+	
+	get_parent().visible = false
+	await SceneManager.change_scene(game_scene, {
 		"pattern_enter": "scribbles",
+		"pattern_leave": "scribbles",
 	})

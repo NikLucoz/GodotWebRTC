@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 SceneManager="*res://addons/scene_manager/SceneManager.tscn"
 MultiplayerController="*res://Multiplayer/MultiplayerController.tscn"
+GameManager="*res://GameScene/GameManager.gd"
 
 [editor]
 

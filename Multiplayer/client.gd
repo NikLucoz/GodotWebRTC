@@ -6,6 +6,7 @@ var host_id: int
 var lobby_id: String = ""
 var available_lobbies: Dictionary = {}
 var player_data: PlayerData = null
+
 @export var game_scene: PackedScene
 @onready var start_action_menu: VBoxContainer = $"../Menu/StartActionMenu"
 @onready var lobbies_list_menu: VBoxContainer = $"../Menu/LobbiesListMenu"

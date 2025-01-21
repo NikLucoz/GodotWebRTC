@@ -24,7 +24,7 @@ func _process(_delta: float) -> void:
 			var data = JSON.parse_string(data_string)
 			
 			if data.message == Message.lobby:
-				join_lobby(data.id, data.lobby_id)
+				join_lobby(data.id, data.lobby_id, data.player_data)
 			
 			if data.message == Message.lobbiesData:
 				var message = {
@@ -41,12 +41,24 @@ func start_server() -> void:
 	peer.create_server(host_port)
 	print("Server started")
 
-func join_lobby(user_id, lobby_id) -> void:
+func join_lobby(user_id, lobby_id, player_data: Dictionary) -> void:
+	var config = ConfigFile.new()
+	var err = config.load("res://global.ini")
+	
+	# If the file didn't load, ignore it.
+	if err != OK:
+		return
+	
 	if lobby_id == "":
 		lobby_id = generate_random_id()
 		lobbies[lobby_id] = Lobby.new(user_id)
-		
-	var player = lobbies[lobby_id].add_player(user_id)
+	
+	
+	if lobbies[lobby_id].players.size() >= int(config.get_value("LOBBY", "MAX_LOBBY_SIZE")):
+		push_warning("Cannot fit player inside this lobby, it's full")
+		return
+
+	var player = lobbies[lobby_id].add_player(user_id, player_data)
 
 	# When a new lobby is created the server signal all the peer that a new lobby is present giving them the updated list
 	var lobbies_data = {}
@@ -110,6 +122,3 @@ func _on_peer_connected(id) -> void:
 
 func _on_peer_disconnected(id) -> void:
 	print("Peer disconnected from server: " + str(id))
-
-func _on_start_server_pressed() -> void:
-	start_server()

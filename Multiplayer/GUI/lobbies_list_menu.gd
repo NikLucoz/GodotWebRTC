@@ -14,6 +14,8 @@ func update_lobby_items() -> void:
 		var lobby = available_lobbies[al]
 		var instance = LOBBY_SHOW_ITEM.instantiate()
 		instance.lobby_id = lobby.id
+		var lobby_players: Dictionary = JSON.parse_string(lobby.players)
+		instance.lobby_host_name = lobby_players[str(lobby.host_id)].player_data.name
 		instance.lobby_player_count = lobby.player_count
 		instance.get_node("Control/JoinLobbyButton").connect("pressed", _on_lobby_selected.bind(lobby.id))
 		lobby_show_container.add_child(instance)

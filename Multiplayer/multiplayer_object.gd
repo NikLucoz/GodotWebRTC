@@ -13,7 +13,7 @@ enum Message {
 	answer
 }
 
-var characters = "abcdefghilmnopqrstuvwxyzABCDEFGHILMNOPQRSTUVWXYZ1234567890!@#%&$"
+var characters = "abcdefghilmnopqrstuvwxyzABCDEFGHILMNOPQRSTUVWXYZ1234567890"
 
 var peer = WebSocketMultiplayerPeer.new()
 

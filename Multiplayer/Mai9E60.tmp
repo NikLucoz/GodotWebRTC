@@ -1,0 +1,151 @@
+[gd_scene load_steps=6 format=3 uid="uid://0m1kpug5hel3"]
+
+[ext_resource type="Script" path="res://Multiplayer/client.gd" id="1_yawk8"]
+[ext_resource type="Script" path="res://Multiplayer/server.gd" id="2_yru57"]
+[ext_resource type="Script" path="res://Multiplayer/GUI/player_option_menu.gd" id="3_7k84e"]
+[ext_resource type="Script" path="res://Multiplayer/GUI/lobbies_list_menu.gd" id="3_rm2bd"]
+[ext_resource type="Script" path="res://Multiplayer/GUI/lobby_menu.gd" id="4_5op2i"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Client" type="Node" parent="."]
+script = ExtResource("1_yawk8")
+
+[node name="Server" type="Node" parent="."]
+script = ExtResource("2_yru57")
+host_port = null
+
+[node name="Menu" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 100
+
+[node name="StartActionMenu" type="VBoxContainer" parent="Menu"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/StartActionMenu"]
+layout_mode = 2
+alignment = 2
+
+[node name="OpenPlayerOptionMenu" type="Button" parent="Menu/StartActionMenu/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Settings"
+
+[node name="HostJoinSelection" type="HBoxContainer" parent="Menu/StartActionMenu"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="HostGame" type="Button" parent="Menu/StartActionMenu/HostJoinSelection"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Host Game"
+
+[node name="OpenLobbiesMenu" type="Button" parent="Menu/StartActionMenu/HostJoinSelection"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Join Game"
+
+[node name="PlayerOptionMenu" type="VBoxContainer" parent="Menu"]
+visible = false
+layout_mode = 2
+script = ExtResource("3_7k84e")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/PlayerOptionMenu"]
+layout_mode = 2
+
+[node name="PlayerNameTextEdit" type="TextEdit" parent="Menu/PlayerOptionMenu/HBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Player name"
+
+[node name="Control" type="Control" parent="Menu/PlayerOptionMenu"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SaveButton" type="Button" parent="Menu/PlayerOptionMenu"]
+layout_mode = 2
+text = "Save"
+
+[node name="LobbiesListMenu" type="VBoxContainer" parent="Menu"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 20
+script = ExtResource("3_rm2bd")
+
+[node name="Label" type="Label" parent="Menu/LobbiesListMenu"]
+layout_mode = 2
+text = "Lobbies available"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Menu/LobbiesListMenu"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LobbyShowContainer" type="VBoxContainer" parent="Menu/LobbiesListMenu/ScrollContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LobbyMenu" type="Panel" parent="Menu"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("4_5op2i")
+
+[node name="MarginContainer" type="MarginContainer" parent="Menu/LobbyMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+
+[node name="container" type="VBoxContainer" parent="Menu/LobbyMenu/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="lobbyIdLabel" type="Label" parent="Menu/LobbyMenu/MarginContainer/container"]
+layout_mode = 2
+text = "Lobby: lobby_id"
+
+[node name="lobbyHostIdLabel" type="Label" parent="Menu/LobbyMenu/MarginContainer/container"]
+layout_mode = 2
+text = "Lobby Host: lobby_host_id"
+
+[node name="lobbyPlayersLabel" type="Label" parent="Menu/LobbyMenu/MarginContainer/container"]
+layout_mode = 2
+text = "Players: { }"
+
+[node name="Control" type="Control" parent="Menu/LobbyMenu/MarginContainer/container"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Menu/LobbyMenu/MarginContainer/container/Control"]
+layout_mode = 1
+offset_right = 96.0
+offset_bottom = 31.0
+text = "Start Game"
+
+[connection signal="pressed" from="Menu/StartActionMenu/HBoxContainer/OpenPlayerOptionMenu" to="Client" method="_on_open_player_option_menu_pressed"]
+[connection signal="pressed" from="Menu/StartActionMenu/HostJoinSelection/HostGame" to="Client" method="_on_host_game_pressed"]
+[connection signal="pressed" from="Menu/StartActionMenu/HostJoinSelection/OpenLobbiesMenu" to="Client" method="_on_open_lobbies_menu_pressed"]
+[connection signal="pressed" from="Menu/PlayerOptionMenu/SaveButton" to="Menu/PlayerOptionMenu" method="_on_save_button_pressed"]

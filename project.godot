@@ -11,10 +11,19 @@ config_version=5
 [application]
 
 config/name="WebRTC"
-run/main_scene="res://Multiplayer/Main.tscn"
+run/main_scene="res://MainMenu.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+SceneManager="*res://addons/scene_manager/SceneManager.tscn"
+MultiplayerController="*res://Multiplayer/MultiplayerController.tscn"
 
 [editor]
 
 run/main_run_args="--server"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/scene_manager/plugin.cfg")

@@ -42,6 +42,13 @@ func _process(_delta: float) -> void:
 					print("Game started, lobby removed")
 					lobbies.erase(data.lobby_id)
 
+					var message = {
+						"message": Message.lobbiesData,
+						"available_lobbies": JSON.stringify(lobbies)
+					}
+					
+					send_packet(message)
+
 func start_server() -> void:
 	peer.create_server(host_port)
 	print("Server started")
